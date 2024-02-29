@@ -1,12 +1,16 @@
 FROM debian:12-slim
 LABEL maintainer="david@indrovi.cz"
 
+# copy debian-docker folder to /tmp
 COPY . /tmp/fusionpbx-install.sh
 
-WORKDIR /tmp/fusionpbx-install.sh/debian-docker
+WORKDIR /tmp/fusionpbx-install.sh
 
+# fix permissions
+RUN chmod -R +x ./*
+
+# run installation
 RUN ./pre-install.sh
-
 RUN ./install.sh
 
 VOLUME [ "/var/cache/fusionpbx", \
