@@ -64,6 +64,8 @@ ln -s /etc/nginx/sites-available/fusionpbx /etc/nginx/sites-enabled/fusionpbx
 ln -s /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
 ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 
+chown -R www-data:www-data /etc/ssl/
+
 #remove the default site
 rm /etc/nginx/sites-enabled/default
 
@@ -79,3 +81,5 @@ fi
 
 #restart nginx
 service nginx restart
+
+chown www-data:www-data /run/nginx.pid

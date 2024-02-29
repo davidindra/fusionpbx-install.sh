@@ -1,17 +1,24 @@
-FROM debian:12-slim
+FROM debian:12-slim AS base
 LABEL maintainer="david@indrovi.cz"
 
 # copy debian-docker folder to /tmp
 COPY . /tmp/fusionpbx-install.sh
-
 WORKDIR /tmp/fusionpbx-install.sh
-
 # fix permissions
 RUN chmod -R +x ./*
-
-# run installation
+# install packages
 RUN ./pre-install.sh
+
+FROM base AS install
+
+WORKDIR /tmp/fusionpbx-install.sh
 RUN ./install.sh
+RUN rm -rf /tmp/fusionpbx-install.sh
+
+RUN chown www-data:www-data /var/log/php8.1-fpm.log
+RUN chown -R www-data:www-data /var/log/nginx
+
+FROM install AS final
 
 VOLUME [ "/var/cache/fusionpbx", \
          "/var/www/fusionpbx", \
@@ -19,10 +26,10 @@ VOLUME [ "/var/cache/fusionpbx", \
          "/usr/share/freeswitch", \
          "/var/lib/freeswitch", \
          "/var/lib/postgresql", \
-         "/var/log/freeswitch", \
+         "/var/log", \
          "/var/run/freeswitch" ]
 
-ENTRYPOINT ["service postgresql start && service snmpd start && service freeswitch start && service php8.1-fpm start && service nginx start"]
+CMD /usr/bin/supervisord -n
 
 # FusionPBX web admin
 EXPOSE 80 443

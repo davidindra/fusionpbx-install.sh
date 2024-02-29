@@ -7,6 +7,9 @@ cd "$(dirname "$0")"
 . ./config.sh
 . ./colors.sh
 
+# supervisord configuration
+cp supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 #database details
 database_username=fusionpbx
 if [ .$database_password = .'random' ]; then
